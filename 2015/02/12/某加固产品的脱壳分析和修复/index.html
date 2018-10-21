@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="0x00 前言近几年来，随着Android移动领域的迅猛发展，出现越来越多的APP安全问题，为了保护APP防止被逆向破解，恶意篡改打包植入木马病毒， 窃取隐秘数据等问题，随着诞生了APK加固保护技术,本文主要对加固DEX技术的分析。">
+<meta name="keywords" content="Android,加固">
+<meta property="og:type" content="article">
+<meta property="og:title" content="某加固产品的脱壳分析和修复">
+<meta property="og:url" content="http://www.zzage.cn/2015/02/12/某加固产品的脱壳分析和修复/index.html">
+<meta property="og:site_name" content="家徒四壁">
+<meta property="og:description" content="0x00 前言近几年来，随着Android移动领域的迅猛发展，出现越来越多的APP安全问题，为了保护APP防止被逆向破解，恶意篡改打包植入木马病毒， 窃取隐秘数据等问题，随着诞生了APK加固保护技术,本文主要对加固DEX技术的分析。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/1.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/2.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/3.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/4.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/5.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/6.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/7.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/8.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/9.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/10.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/11.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/12.png">
+<meta property="og:image" content="http://www.zzage.cn/images/2015/02/12/13.png">
+<meta property="og:updated_time" content="2017-08-23T16:25:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="某加固产品的脱壳分析和修复">
+<meta name="twitter:description" content="0x00 前言近几年来，随着Android移动领域的迅猛发展，出现越来越多的APP安全问题，为了保护APP防止被逆向破解，恶意篡改打包植入木马病毒， 窃取隐秘数据等问题，随着诞生了APK加固保护技术,本文主要对加固DEX技术的分析。">
+<meta name="twitter:image" content="http://www.zzage.cn/images/2015/02/12/1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.zzage.cn/2015/02/12/某加固产品的脱壳分析和修复/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>某加固产品的脱壳分析和修复 | 家徒四壁</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">家徒四壁</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">十分贫困，一无所有。</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zzage.cn/2015/02/12/某加固产品的脱壳分析和修复/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZzAge">
+      <meta itemprop="description" content="本有今无，本无今有。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="家徒四壁">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">某加固产品的脱壳分析和修复
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2015-02-12 18:10:00" itemprop="dateCreated datePublished" datetime="2015-02-12T18:10:00+08:00">2015-02-12</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2017-08-24 00:25:13" itemprop="dateModified" datetime="2017-08-24T00:25:13+08:00">2017-08-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>近几年来，随着Android移动领域的迅猛发展，出现越来越多的APP安全问题，为了保护APP防止被逆向破解，恶意篡改打包植入木马病毒， 窃取隐秘数据等问题，随着诞生了APK加固保护技术,本文主要对加固DEX技术的分析。<br><a id="more"></a></p>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><ul>
+<li>Beyond Compare 可以通过对比看到加固前后的文件变化</li>
+<li>ApkTool 可反编译和回编译APK</li>
+<li>010 Editor 提供了丰富的文件格式模版,可通过该工具分析DEX文件格式</li>
+<li>IDA Pro 目前最流行的专业反汇编工具，可动态静态调试分析DEX文件和so文件</li>
+<li>原始APK文件与通过加固后的APK文件</li>
+</ul>
+<h3 id="0x02-分析过程"><a href="#0x02-分析过程" class="headerlink" title="0x02 分析过程"></a>0x02 分析过程</h3><p>(1).<strong>用Beyond Compare对比工具看一下原始APK和加固后APK文件相关变化：</strong><br><img src="http://www.zzage.cn/images/2015/02/12/1.png" alt=""><br>图1：原始APK与加固后APK的变化对比结果</p>
+<p><font color="#FF0000" size="4" face="黑体">加固后的文件列表变化:</font><br><strong>新增文件列表：</strong><br>libmain.so<br>libshell.so<br><strong>修改文件列表:</strong><br>AndroidManifest.xml<br>classes.dex<br>(2).<strong> ApkTool反编译加固后的APK, 出现无法正常反编译的错误，日志如下图2:</strong><br>通过下面日志(图2)能看出来是apktool解析AndroidManifest.xml时出错，注意绿色下划线的name=fasten，这里是加固利用android系统解析axml的一个特点来导致apktool反编译时，在解析AndroidManifest.xml时出错。<br>关于利用AndroidManifest.xml这块的技术点传送站：<a href="http://www.cnblogs.com/wanyuanchun/p/4084292.htm" target="_blank" rel="noopener">地址</a><br><img src="http://www.zzage.cn/images/2015/02/12/2.png" alt=""><br>图2：ApkTool反编译加固APK失败的提示信息<br>(3).<strong>下面来分析和修复AndroidManifest.xml</strong><br>分析前，可以先了解一下AndroidManifest.xml的二进制格式，参考下列文章:<br><a href="http://bbs.pediy.com/showthread.php?t=194206" target="_blank" rel="noopener">AndroidManifest二进制文件格式分析</a><br>辅助分析AndroidManifest.xml的二进制格式可以使用下面的:<br><a href="https://github.com/strazzere/010Editor-stuff/tree/master/Templates" target="_blank" rel="noopener">AXML的010 Editor模板</a><br>利用axml模版在010Editor解析AndroidManifest.xml能看到,有一个属性结构的name成员的值是25, 该值指向是string的索引，同时也是res ID的索引。<br>属性结构:<br><img src="http://www.zzage.cn/images/2015/02/12/3.png" alt=""><br>图3：利用010editor的模版功能分析AndroidManifest.xml<br>String索引:<br><img src="http://www.zzage.cn/images/2015/02/12/4.png" alt=""><br>图4：引起ApkTool反编译失败的String索引<br>Res ID 索引:<br><img src="http://www.zzage.cn/images/2015/02/12/5.png" alt=""><br>图5：引起ApkTool反编译失败的异常ResID<br>针对AndroidManifest.xml的name属性名相关作用和特点的解释：<br><img src="http://www.zzage.cn/images/2015/02/12/6.png" alt=""><br>图6：引用万抽抽大神的博客里对AndroidManifest.xml的属性名的解释<br>属性结构的name成员的值是即是string索引，又是ResID索引，所以:</p>
+<p><font color="#FF0000" size="2" face="黑体">Name=25<br>String[25]=fasten<br>ResIDs[25]=0x01017FFF</font><br>Android系统在解析AXML的属性的时候，是通过该属性的res id号而非属性名定位的。所谓的AXML就是AndroidManifest.xml对应的二进制文件，APK包中存储的就是AXML。比如属性：<br><figure class="highlight fsharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">public</span> <span class="class"><span class="keyword">type</span></span>=<span class="string">"attr"</span> name=<span class="string">"name"</span> id=<span class="string">"0x01010003"</span> /&gt;</span><br></pre></td></tr></table></figure></p>
+<p>它的属性名为name，id号为0x01010003。<br>所以<font color="#FF0000" size="2" face="黑体">“faste”</font>这个字符串可以随意改，关键是ResID的值，这里加固是对AndroidManifest.xml处理，插入一下非法的属性ID(在Android的attr里没有一个ID为0x01017FFF)，因为是非法的属性ID，Android是不会去解析，但ApkTool却会去解析，所以导致反编译出错了。<br>关于attr的属性id号的定义，可参考以下文件(AndroidSDK里的文件):<br>%ANDROID_SDK%\platforms\android-19\data\res\values\public.xml<br><strong>修复方法:</strong><br>知道怎么回事，修复起来就很简单了，只要把非法的属性ID=0x0101FFFF改成一个合法的属性ID，比如把0x0101FFFF改成name的属性ID=0x01010003,然后再把修改后的AndroidManifest.xml再替换加固后apk里的AndroidManifest.xml，然后用apktook就可以顺利的成功的反编译出来。<br>附件有我用官网最新版的ApkTool 2.0.0 RC3源码编译，修改了一下，修复非法属性ID无法反编译。如果懒得手动去修改AndroidManifest.xml，可以直接用我这个修改过的apktool进行反编译。<br><img src="http://www.zzage.cn/images/2015/02/12/7.png" alt=""><br>图7：ApkTool修改版的反编译成功信息<br>反编译后,看加固修改后的AndroidManifest.xml和原版的AndroidManifest.xml多这三条：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;service <span class="string">android:</span>name=<span class="string">"com.tencent.mm.fasten.check.log"</span> /&gt;</span><br><span class="line"><span class="string">android:</span>fasten=<span class="string">"meta-data"</span></span><br><span class="line">&lt;meta-data <span class="string">android:</span>name=<span class="string">"@anim/push_top_out2"</span> <span class="string">android:</span>value=<span class="string">"meta-data"</span> /&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x03-还原修复Dex过程"><a href="#0x03-还原修复Dex过程" class="headerlink" title="0x03 还原修复Dex过程"></a>0x03 还原修复Dex过程</h3><p>ApkTool反编译可以成功，那接下来看一下该加固是怎么对Dex进行加密,通过Beyond Compare对比工具得知加固后变化如下:<br>新增了2个smail文件:<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">com<span class="symbol">\t</span>encent<span class="symbol">\S</span>tubShell<span class="symbol">\P</span>roxyShell.smali</span><br><span class="line">com<span class="symbol">\t</span>encent<span class="symbol">\S</span>tubShell<span class="symbol">\S</span>hellHelper.smali</span><br></pre></td></tr></table></figure></p>
+<p>Smail代码的变化(对指定方法进行抽取代码):<br><img src="http://www.zzage.cn/images/2015/02/12/8.png" alt=""><br>图8：原始APK的类代码和加固后APK被抽取的类代码比较结果<br>从图8能看到，加固后的dex，通过apktool反编译后的smali代码变化。<br>(1)<br>新增静态代码块:<br>(只要加载此类，就会先执行该代码块，作用是用来动态恢复被加固的方法)<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.method</span><span class="keyword"> static</span><span class="keyword"> constructor</span> &lt;clinit&gt;()V</span><br><span class="line"><span class="keyword">    .locals</span> 2</span><br><span class="line"><span class="keyword">    .prologue</span></span><br><span class="line">   <span class="built_in"> const-string </span>v0, <span class="string">"com.boco.nfc.activity"</span></span><br><span class="line">   <span class="built_in"> const/16 </span>v1, 0x0</span><br><span class="line">   <span class="built_in"> invoke-static	</span>&#123;v0,v1&#125;,<span class="class">Lcom/tencent/StubShell/ShellHelper;</span>-&gt;StartShell(<span class="class">Ljava/lang/String;</span>I)Z</span><br><span class="line">return-void</span><br><span class="line"><span class="keyword">.end method</span></span><br></pre></td></tr></table></figure></p>
+<p>用JEB转成代码如下:<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        ShellHelper.StartShell(<span class="string">"com.boco.nfc.activity"</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>(2)<br>原始方法:<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.method <span class="keyword">public</span> <span class="function"><span class="keyword">constructor</span> &lt;<span class="title">init</span>&gt;<span class="params">(Landroid/content/Context;)</span><span class="title">V</span></span></span><br></pre></td></tr></table></figure></p>
+<p>改为native属性,并且隐藏字节码：<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.method <span class="keyword">public</span> native <span class="function"><span class="keyword">constructor</span> &lt;<span class="title">init</span>&gt;<span class="params">(Landroid/content/Context;)</span><span class="title">V</span></span></span><br></pre></td></tr></table></figure></p>
+<p>被加固后的Method数据:<br><img src="http://www.zzage.cn/images/2015/02/12/9.png" alt=""><br>图9：加固后DEX的Method结构变化<br>从这里能看到关键在于StartShell函数,这个StartShell函数专门负责在执行时动态还原被加固的Method结构数据，这种加固方式没办法直接通过dump来进行脱壳，它的机制是需要运行到某个类，在初始化加载这个类时才会修复一下该类被加固的Method结构数据，但又不能保证APP运行后所有类都能触发执行到，所以还是得找原始Method结构数据来进行修复dex。<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> StartShell(<span class="keyword">String</span> packageName, <span class="keyword">int</span> iIndex)</span><br></pre></td></tr></table></figure></p>
+<p>从StartShell函数第二个参数iIndex来看，是要修复那个Method结构数据的序号。所以，可以肯定会有一份原始的数据供给修复，那么，我们从StartShell函数入手分析，就能找到修复的原始数据。<br><img src="http://www.zzage.cn/images/2015/02/12/10.png" alt=""><br>图10：加固Loader里的还原类函数代码的接口函数<br>StartShell函数会先判断如果没有初始化过则执行InitProxyShell函数，InitProxyShell函数作用其实就是加载libshell.so, 最后，调用libshell.so的load(ShellHelper.strPackageName, iIndex)函数来进行修复。<br>从这里能看到，关键是libshell.so的load函数在负责动态修复还原DEX的类方法Method结构数据的功能，下面就用IDA把libshell.so分析一下load函数。<br>(1)    看一下libshell.so的JNI_OnLoad函数(图11)<br>主要就是做一些初始化的操作，看来没什么我们想要的东西，我们直接主题，找load函数。<br><img src="http://www.zzage.cn/images/2015/02/12/11.png" alt=""><br>图11：libshell.so的JNI_OnLoad函数<br>(2)    Load函数在0xC630的偏移<br><img src="http://www.zzage.cn/images/2015/02/12/12.png" alt=""><br>图12：libshell.so的Load函数<br>这里我说一下func_ShellFixDexMethod这个函数处理:<br>(a).通过/proc/(getpid)/maps 打开自身进程的内存映射，查找classes.dex的内存地址。<br>(b).该加固会把所有被经过抽取过的类方法Method结构的原始数据存一份在文件尾部。<br>定位Method的原始数据存放地址的方法：<br>原始数据偏移 = DexDataOff + DexDataSize<br>有多少个Method需要修复 = (DexFileSize – (DexDataOff + DexDataSize))/0x12<br>每一个类方法Method的原始数据是用一个0x12大小的结构来保存的，结构如下:<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">TXFixDexData</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    DWORD dwClassDefItem; <span class="comment">//Class_defs的索引id</span></span><br><span class="line">    DWORD dwMethodIdx;    <span class="comment">//DexMethod结构里的methodIdx值</span></span><br><span class="line">    DWORD dwaccessFlags;  <span class="comment">//DexMethod结构里的dwaccessFlags值</span></span><br><span class="line">    DWORD dwDexCodeOff;   <span class="comment">//DexMethod结构里的codeOff</span></span><br><span class="line">    WORD  wProtoIdItem;  <span class="comment">//proto_ids的索引id</span></span><br><span class="line">&#125;TXFixDexData;</span><br></pre></td></tr></table></figure></p>
+<p>(c).已经可以知道Method的原始数据,接下来就看怎么修复。关键就是要怎么定位到哪个Method是需要修复的。如果熟悉Dex结构的，应该就比较容易如何修复。<br>我的修复方法:先通过Class_defs的索引id(TXFixDexData-&gt;dwClassDefItem)定位到需要修复的Method所在的类，再取该类的所有Method，把每个Method的DexMethod-&gt;methoIdx值等于TXFixDexData-&gt;dwMethodIdx,就确定是需要修复的Method, 然后把该Method的DexMethod结构的accessFlags和codeOff修复就OK。<br>下面是运行对加固的classes.dex的脱壳修复工具:<br><img src="http://www.zzage.cn/images/2015/02/12/13.png" alt=""><br>图13：脱壳修复工具的运行结果<br>最后，把修复完的classes.dex放到apk，再反编译下，能看到被隐藏Method的代码回来了，但是还需要做一些扫尾的事，才能算完全脱壳成功。<br>(d).搜索一下所有smali文件的下面这一句代码，然后全部删除：<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">invoke-<span class="class">static </span>&#123;v0, v1&#125;, Lcom<span class="meta-keyword">/tencent/</span>StubShell/ShellHelper;-&gt;StartShell(Ljava<span class="meta-keyword">/lang/</span>String;I)Z</span><br></pre></td></tr></table></figure></p>
+<p>(e).删除掉AndroidManifest.xml这三个地方：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;service <span class="string">android:</span>name=<span class="string">"com.tencent.mm.fasten.check.log"</span> /&gt;</span><br><span class="line"><span class="string">android:</span>fasten=<span class="string">"meta-data"</span></span><br><span class="line">&lt;meta-data <span class="string">android:</span>name=<span class="string">"@anim/push_top_out2"</span> <span class="string">android:</span>value=<span class="string">"meta-data"</span> /&gt;</span><br></pre></td></tr></table></figure></p>
+<p>最后再重新打包为APK，至此，该加固的DEX脱壳修复完毕！</p>
+<h3 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h3><p>(1).该加固产品的分析思路，先分析原始APK和加固后APK的文件变化，这样能比较清楚了解加固产品对原始APK的有哪些改动，能较快速找到分析的切入点。<br>(2).该加固产品通过在AndroidManifest.xml插入一个异常非法ResID，导致反编译工具无法正常运作。<br>(3).该加固产品的加固思路主要在于抽取类代码，在Apk运行调用方法时再进行修复还原，这样的好处是无法直接内存里dump DEX进行脱壳。</p>
+<p>相关附件下载地址: <a href="http://pan.baidu.com/s/1eQs3fZc" target="_blank" rel="noopener">http://pan.baidu.com/s/1eQs3fZc</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/加固/" rel="tag"># 加固</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2010/09/10/简单实现隐藏SSDTHOOK/" rel="next" title="简单实现隐藏SSDT HOOK">
+                <i class="fa fa-chevron-left"></i> 简单实现隐藏SSDT HOOK
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">ZzAge</p>
+              <p class="site-description motion-element" itemprop="description">本有今无，本无今有。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-准备工作"><span class="nav-number">2.</span> <span class="nav-text">0x01 准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-分析过程"><span class="nav-number">3.</span> <span class="nav-text">0x02 分析过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-还原修复Dex过程"><span class="nav-number">4.</span> <span class="nav-text">0x03 还原修复Dex过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-总结"><span class="nav-number">5.</span> <span class="nav-text">0x04 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZzAge</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.4.2</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

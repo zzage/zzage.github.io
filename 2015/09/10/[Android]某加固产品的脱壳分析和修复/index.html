@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Windows,内核," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="主要特性 支持“标准”Markdown / CommonMark和Github风格的语法，也可变身为代码编辑器； 支持实时预览、图片（跨域）上传、预格式文本/代码/表格插入、代码折叠、搜索替换、只读模式、自定义样式主题和多语言语法高亮等功能； 支持ToC（Table of Contents）、Emoji表情、Task lists、@链接等Markdown扩展语法； 支持TeX科学公式（基于KaTe">
+<meta name="keywords" content="Windows,内核">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单实现隐藏SSDT HOOK">
+<meta property="og:url" content="http://www.zzage.cn/2015/09/10/[Android]某加固产品的脱壳分析和修复/index.html">
+<meta property="og:site_name" content="家徒四壁">
+<meta property="og:description" content="主要特性 支持“标准”Markdown / CommonMark和Github风格的语法，也可变身为代码编辑器； 支持实时预览、图片（跨域）上传、预格式文本/代码/表格插入、代码折叠、搜索替换、只读模式、自定义样式主题和多语言语法高亮等功能； 支持ToC（Table of Contents）、Emoji表情、Task lists、@链接等Markdown扩展语法； 支持TeX科学公式（基于KaTe">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pandao.github.io/editor.md/images/logos/editormd-logo-180x180.png">
+<meta property="og:image" content="https://img.shields.io/github/stars/pandao/editor.md.svg">
+<meta property="og:image" content="https://img.shields.io/github/forks/pandao/editor.md.svg">
+<meta property="og:image" content="https://img.shields.io/github/tag/pandao/editor.md.svg">
+<meta property="og:image" content="https://img.shields.io/github/release/pandao/editor.md.svg">
+<meta property="og:image" content="https://img.shields.io/github/issues/pandao/editor.md.svg">
+<meta property="og:image" content="https://img.shields.io/bower/v/editor.md.svg">
+<meta property="og:image" content="https://pandao.github.io/editor.md/examples/images/4.jpg">
+<meta property="og:image" content="https://pandao.github.io/editor.md/examples/images/8.jpg">
+<meta property="og:image" content="https://pandao.github.io/editor.md/examples/images/7.jpg">
+<meta property="og:updated_time" content="2017-08-23T14:52:43.207Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简单实现隐藏SSDT HOOK">
+<meta name="twitter:description" content="主要特性 支持“标准”Markdown / CommonMark和Github风格的语法，也可变身为代码编辑器； 支持实时预览、图片（跨域）上传、预格式文本/代码/表格插入、代码折叠、搜索替换、只读模式、自定义样式主题和多语言语法高亮等功能； 支持ToC（Table of Contents）、Emoji表情、Task lists、@链接等Markdown扩展语法； 支持TeX科学公式（基于KaTe">
+<meta name="twitter:image" content="https://pandao.github.io/editor.md/images/logos/editormd-logo-180x180.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.zzage.cn/2015/09/10/[Android]某加固产品的脱壳分析和修复/"/>
+
+
+
+
+
+  <title>简单实现隐藏SSDT HOOK | 家徒四壁</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">家徒四壁</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">十分贫困，一无所有。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zzage.cn/2015/09/10/[Android]某加固产品的脱壳分析和修复/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZzAge">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/default_avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="家徒四壁">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">简单实现隐藏SSDT HOOK</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-09-10T19:12:16+08:00">
+                2015-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2015/09/10/[Android]某加固产品的脱壳分析和修复/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2015/09/10/[Android]某加固产品的脱壳分析和修复/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h3><ul>
+<li>支持“标准”Markdown / CommonMark和Github风格的语法，也可变身为代码编辑器；</li>
+<li>支持实时预览、图片（跨域）上传、预格式文本/代码/表格插入、代码折叠、搜索替换、只读模式、自定义样式主题和多语言语法高亮等功能；</li>
+<li>支持ToC（Table of Contents）、Emoji表情、Task lists、@链接等Markdown扩展语法；</li>
+<li>支持TeX科学公式（基于KaTeX）、流程图 Flowchart 和 时序图 Sequence Diagram;</li>
+<li>支持识别和解析HTML标签，并且支持自定义过滤标签解析，具有可靠的安全性和几乎无限的扩展性；</li>
+<li>支持 AMD / CMD 模块化加载（支持 Require.js &amp; Sea.js），并且支持自定义扩展插件；</li>
+<li>兼容主流的浏览器（IE8+）和Zepto.js，且支持iPad等平板设备；</li>
+<li>支持自定义主题样式；<a id="more"></a>
+<h1 id="Editor-md"><a href="#Editor-md" class="headerlink" title="Editor.md"></a>Editor.md</h1></li>
+</ul>
+<p><img src="https://pandao.github.io/editor.md/images/logos/editormd-logo-180x180.png" alt=""></p>
+<p><img src="https://img.shields.io/github/stars/pandao/editor.md.svg" alt=""> <img src="https://img.shields.io/github/forks/pandao/editor.md.svg" alt=""> <img src="https://img.shields.io/github/tag/pandao/editor.md.svg" alt=""> <img src="https://img.shields.io/github/release/pandao/editor.md.svg" alt=""> <img src="https://img.shields.io/github/issues/pandao/editor.md.svg" alt=""> <img src="https://img.shields.io/bower/v/editor.md.svg" alt=""></p>
+<p><strong>目录 (Table of Contents)</strong></p>
+<p>[TOCM]</p>
+<p>[TOC]</p>
+<h1 id="Heading-1"><a href="#Heading-1" class="headerlink" title="Heading 1"></a>Heading 1</h1><h2 id="Heading-2"><a href="#Heading-2" class="headerlink" title="Heading 2"></a>Heading 2</h2><h3 id="Heading-3"><a href="#Heading-3" class="headerlink" title="Heading 3"></a>Heading 3</h3><h4 id="Heading-4"><a href="#Heading-4" class="headerlink" title="Heading 4"></a>Heading 4</h4><h5 id="Heading-5"><a href="#Heading-5" class="headerlink" title="Heading 5"></a>Heading 5</h5><h6 id="Heading-6"><a href="#Heading-6" class="headerlink" title="Heading 6"></a>Heading 6</h6><h1 id="Heading-1-link-Heading-link"><a href="#Heading-1-link-Heading-link" class="headerlink" title="Heading 1 link Heading link"></a>Heading 1 link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a></h1><h2 id="Heading-2-link-Heading-link"><a href="#Heading-2-link-Heading-link" class="headerlink" title="Heading 2 link Heading link"></a>Heading 2 link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a></h2><h3 id="Heading-3-link-Heading-link"><a href="#Heading-3-link-Heading-link" class="headerlink" title="Heading 3 link Heading link"></a>Heading 3 link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a></h3><h4 id="Heading-4-link-Heading-link-Heading-link-Heading-link"><a href="#Heading-4-link-Heading-link-Heading-link-Heading-link" class="headerlink" title="Heading 4 link Heading link Heading link Heading link"></a>Heading 4 link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a> Heading link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a></h4><h5 id="Heading-5-link-Heading-link"><a href="#Heading-5-link-Heading-link" class="headerlink" title="Heading 5 link Heading link"></a>Heading 5 link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a></h5><h6 id="Heading-6-link-Heading-link"><a href="#Heading-6-link-Heading-link" class="headerlink" title="Heading 6 link Heading link"></a>Heading 6 link <a href="https://github.com/pandao/editor.md" title="Heading link" target="_blank" rel="external">Heading link</a></h6><h4 id="标题（用底线的形式）Heading-underline"><a href="#标题（用底线的形式）Heading-underline" class="headerlink" title="标题（用底线的形式）Heading (underline)"></a>标题（用底线的形式）Heading (underline)</h4><h1 id="This-is-an-H1"><a href="#This-is-an-H1" class="headerlink" title="This is an H1"></a>This is an H1</h1><h2 id="This-is-an-H2"><a href="#This-is-an-H2" class="headerlink" title="This is an H2"></a>This is an H2</h2><h3 id="字符效果和横线等"><a href="#字符效果和横线等" class="headerlink" title="字符效果和横线等"></a>字符效果和横线等</h3><hr>
+<p><del>删除线</del> <s>删除线（开启识别HTML标签时）</s><br><em>斜体字</em>      <em>斜体字</em><br><strong>粗体</strong>  <strong>粗体</strong><br><strong><em>粗斜体</em></strong> <strong><em>粗斜体</em></strong></p>
+<p>上标：X<sub>2</sub>，下标：O<sup>2</sup></p>
+<p><strong>缩写(同HTML的abbr标签)</strong></p>
+<blockquote>
+<p>即更长的单词或短语的缩写形式，前提是开启识别HTML标签时，已默认开启</p>
+</blockquote>
+<p>The <abbr title="Hyper Text Markup Language">HTML</abbr> specification is maintained by the <abbr title="World Wide Web Consortium">W3C</abbr>.</p>
+<h3 id="引用-Blockquotes"><a href="#引用-Blockquotes" class="headerlink" title="引用 Blockquotes"></a>引用 Blockquotes</h3><blockquote>
+<p>引用文本 Blockquotes</p>
+</blockquote>
+<p>引用的行内混合 Blockquotes</p>
+<blockquote>
+<p>引用：如果想要插入空白换行<code>即&lt;br /&gt;标签</code>，在插入处先键入两个以上的空格然后回车即可，<a href="http://localhost/" target="_blank" rel="external">普通链接</a>。</p>
+</blockquote>
+<h3 id="锚点与链接-Links"><a href="#锚点与链接-Links" class="headerlink" title="锚点与链接 Links"></a>锚点与链接 Links</h3><p><a href="http://localhost/" target="_blank" rel="external">普通链接</a></p>
+<p><a href="http://localhost/" title="普通链接带标题" target="_blank" rel="external">普通链接带标题</a></p>
+<p>直接链接：<a href="https://github.com" target="_blank" rel="external">https://github.com</a></p>
+<p><a href="http://www.this-anchor-link.com/" target="_blank" rel="external">锚点链接</a> </p>
+<p>GFM a-tail link @pandao</p>
+<blockquote>
+<p>@pandao</p>
+</blockquote>
+<h3 id="多语言代码高亮-Codes"><a href="#多语言代码高亮-Codes" class="headerlink" title="多语言代码高亮 Codes"></a>多语言代码高亮 Codes</h3><h4 id="行内代码-Inline-code"><a href="#行内代码-Inline-code" class="headerlink" title="行内代码 Inline code"></a>行内代码 Inline code</h4><p>执行命令：<code>npm install marked</code></p>
+<h4 id="缩进风格"><a href="#缩进风格" class="headerlink" title="缩进风格"></a>缩进风格</h4><p>即缩进四个空格，也做为实现类似<code>&lt;pre&gt;</code>预格式化文本(Preformatted Text)的功能。</p>
+<pre><code>&lt;?php
+    echo &quot;Hello world!&quot;;
+?&gt;
+</code></pre><p>预格式化文本：</p>
+<pre><code>| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
+</code></pre><h4 id="JS代码"><a href="#JS代码" class="headerlink" title="JS代码　"></a>JS代码　</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"Hello world!"</span>);</div><div class="line">&#125;</div><div class="line"> </div><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> box = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        <span class="keyword">return</span> box.fn.init();</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    box.prototype = box.fn = &#123;</div><div class="line">        init : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">            <span class="built_in">console</span>.log(<span class="string">'box.init()'</span>);</div><div class="line"></div><div class="line">			<span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;,</div><div class="line"></div><div class="line">		add : <span class="function"><span class="keyword">function</span>(<span class="params">str</span>)</span>&#123;</div><div class="line">			alert(<span class="string">"add"</span>, str);</div><div class="line"></div><div class="line">			<span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">		&#125;,</div><div class="line"></div><div class="line">		remove : <span class="function"><span class="keyword">function</span>(<span class="params">str</span>)</span>&#123;</div><div class="line">			alert(<span class="string">"remove"</span>, str);</div><div class="line"></div><div class="line">			<span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">		&#125;</div><div class="line">    &#125;;</div><div class="line">    </div><div class="line">    box.fn.init.prototype = box.fn;</div><div class="line">    </div><div class="line">    <span class="built_in">window</span>.box =box;</div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="keyword">var</span> testBox = box();</div><div class="line">testBox.add(<span class="string">"jQuery"</span>).remove(<span class="string">"jQuery"</span>);</div></pre></td></tr></table></figure>
+<h4 id="HTML代码-HTML-codes"><a href="#HTML代码-HTML-codes" class="headerlink" title="HTML代码 HTML codes"></a>HTML代码 HTML codes</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">mate</span> <span class="attr">charest</span>=<span class="string">"utf-8"</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="图片-Images"><a href="#图片-Images" class="headerlink" title="图片 Images"></a>图片 Images</h3><p>Image:</p>
+<p><img src="https://pandao.github.io/editor.md/examples/images/4.jpg" alt=""></p>
+<blockquote>
+<p>Follow your heart.</p>
+</blockquote>
+<p><img src="https://pandao.github.io/editor.md/examples/images/8.jpg" alt=""></p>
+<blockquote>
+<p>图为：厦门白城沙滩</p>
+</blockquote>
+<p>图片加链接 (Image + Link)：</p>
+<p><a href="https://pandao.github.io/editor.md/examples/images/7.jpg" title="李健首张专辑《似水流年》封面" target="_blank" rel="external"><img src="https://pandao.github.io/editor.md/examples/images/7.jpg" alt=""></a></p>
+<blockquote>
+<p>图为：李健首张专辑《似水流年》封面</p>
+</blockquote>
+<hr>
+<h3 id="列表-Lists"><a href="#列表-Lists" class="headerlink" title="列表 Lists"></a>列表 Lists</h3><h4 id="无序列表（减号）Unordered-Lists"><a href="#无序列表（减号）Unordered-Lists" class="headerlink" title="无序列表（减号）Unordered Lists (-)"></a>无序列表（减号）Unordered Lists (-)</h4><ul>
+<li>列表一</li>
+<li>列表二</li>
+<li>列表三</li>
+</ul>
+<h4 id="无序列表（星号）Unordered-Lists"><a href="#无序列表（星号）Unordered-Lists" class="headerlink" title="无序列表（星号）Unordered Lists (*)"></a>无序列表（星号）Unordered Lists (*)</h4><ul>
+<li>列表一</li>
+<li>列表二</li>
+<li>列表三</li>
+</ul>
+<h4 id="无序列表（加号和嵌套）Unordered-Lists"><a href="#无序列表（加号和嵌套）Unordered-Lists" class="headerlink" title="无序列表（加号和嵌套）Unordered Lists (+)"></a>无序列表（加号和嵌套）Unordered Lists (+)</h4><ul>
+<li>列表一</li>
+<li>列表二<ul>
+<li>列表二-1</li>
+<li>列表二-2</li>
+<li>列表二-3</li>
+</ul>
+</li>
+<li>列表三<ul>
+<li>列表一</li>
+<li>列表二</li>
+<li>列表三</li>
+</ul>
+</li>
+</ul>
+<h4 id="有序列表-Ordered-Lists"><a href="#有序列表-Ordered-Lists" class="headerlink" title="有序列表 Ordered Lists (-)"></a>有序列表 Ordered Lists (-)</h4><ol>
+<li>第一行</li>
+<li>第二行</li>
+<li>第三行</li>
+</ol>
+<h4 id="GFM-task-list"><a href="#GFM-task-list" class="headerlink" title="GFM task list"></a>GFM task list</h4><ul>
+<li style="list-style: none"><input type="checkbox" checked> GFM task list 1</li>
+<li style="list-style: none"><input type="checkbox" checked> GFM task list 2</li>
+<li style="list-style: none"><input type="checkbox"> GFM task list 3<ul>
+<li style="list-style: none"><input type="checkbox"> GFM task list 3-1</li>
+<li style="list-style: none"><input type="checkbox"> GFM task list 3-2</li>
+<li style="list-style: none"><input type="checkbox"> GFM task list 3-3</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox"> GFM task list 4<ul>
+<li style="list-style: none"><input type="checkbox"> GFM task list 4-1</li>
+<li style="list-style: none"><input type="checkbox"> GFM task list 4-2</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="绘制表格-Tables"><a href="#绘制表格-Tables" class="headerlink" title="绘制表格 Tables"></a>绘制表格 Tables</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th style="text-align:right">价格</th>
+<th style="text-align:center">数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>计算机</td>
+<td style="text-align:right">$1600</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td>手机</td>
+<td style="text-align:right">$12</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td>管线</td>
+<td style="text-align:right">$1</td>
+<td style="text-align:center">234</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell </td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Function name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>help()</code></td>
+<td>Display the help window.</td>
+</tr>
+<tr>
+<td><code>destroy()</code></td>
+<td><strong>Destroy your computer!</strong></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Left-Aligned</th>
+<th style="text-align:center">Center Aligned</th>
+<th style="text-align:right">Right Aligned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">col 3 is</td>
+<td style="text-align:center">some wordy text</td>
+<td style="text-align:right">$1600</td>
+</tr>
+<tr>
+<td style="text-align:left">col 2 is</td>
+<td style="text-align:center">centered</td>
+<td style="text-align:right">$12</td>
+</tr>
+<tr>
+<td style="text-align:left">zebra stripes</td>
+<td style="text-align:center">are neat</td>
+<td style="text-align:right">$1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th style="text-align:right">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Computer</td>
+<td style="text-align:right">$1600</td>
+</tr>
+<tr>
+<td>Phone</td>
+<td style="text-align:right">$12</td>
+</tr>
+<tr>
+<td>Pipe</td>
+<td style="text-align:right">$1</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="特殊符号-HTML-Entities-Codes"><a href="#特殊符号-HTML-Entities-Codes" class="headerlink" title="特殊符号 HTML Entities Codes"></a>特殊符号 HTML Entities Codes</h4><p>&copy; &amp;  &uml; &trade; &iexcl; &pound;<br>&amp; &lt; &gt; &yen; &euro; &reg; &plusmn; &para; &sect; &brvbar; &macr; &laquo; &middot; </p>
+<p>X&sup2; Y&sup3; &frac34; &frac14;  &times;  &divide;   &raquo;</p>
+<p>18&ordm;C  &quot;  &apos;</p>
+<h3 id="Emoji表情-smiley"><a href="#Emoji表情-smiley" class="headerlink" title="Emoji表情 :smiley:"></a>Emoji表情 :smiley:</h3><blockquote>
+<p>Blockquotes :star:</p>
+</blockquote>
+<h4 id="GFM-task-lists-amp-Emoji-amp-fontAwesome-icon-emoji-amp-editormd-logo-emoji-editormd-logo-5x"><a href="#GFM-task-lists-amp-Emoji-amp-fontAwesome-icon-emoji-amp-editormd-logo-emoji-editormd-logo-5x" class="headerlink" title="GFM task lists &amp; Emoji &amp; fontAwesome icon emoji &amp; editormd logo emoji :editormd-logo-5x:"></a>GFM task lists &amp; Emoji &amp; fontAwesome icon emoji &amp; editormd logo emoji :editormd-logo-5x:</h4><ul>
+<li style="list-style: none"><input type="checkbox" checked> :smiley: @mentions, :smiley: #refs, <a href="">links</a>, <strong>formatting</strong>, and <del>tags</del> supported :editormd-logo:;</li>
+<li style="list-style: none"><input type="checkbox" checked> list syntax required (any unordered or ordered list supported) :editormd-logo-3x:;</li>
+<li style="list-style: none"><input type="checkbox" checked> [ ] :smiley: this is a complete item :smiley:;</li>
+<li style="list-style: none"><input type="checkbox"> []this is an incomplete item <a href="#">test link</a> :fa-star: @pandao; </li>
+<li style="list-style: none"><input type="checkbox"> [ ]this is an incomplete item :fa-star: :fa-gear:;<ul>
+<li style="list-style: none"><input type="checkbox"> :smiley: this is an incomplete item <a href="#">test link</a> :fa-star: :fa-gear:;</li>
+<li style="list-style: none"><input type="checkbox"> :smiley: this is  :fa-star: :fa-gear: an incomplete item <a href="#">test link</a>;</li>
+</ul>
+</li>
+</ul>
+<h4 id="反斜杠-Escape"><a href="#反斜杠-Escape" class="headerlink" title="反斜杠 Escape"></a>反斜杠 Escape</h4><p>*literal asterisks*</p>
+<h3 id="科学公式-TeX-KaTeX"><a href="#科学公式-TeX-KaTeX" class="headerlink" title="科学公式 TeX(KaTeX)"></a>科学公式 TeX(KaTeX)</h3><p>$$E=mc^2$$</p>
+<p>行内的公式$$E=mc^2$$行内的公式，行内的$$E=mc^2$$公式。</p>
+<p>$$(\sqrt{3x-1}+(1+x)^2)$$</p>
+<p>$$\sin(\alpha)^{\theta}=\sum_{i=0}^{n}(x^i + \cos(f))$$</p>
+<p>多行公式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">\displaystyle</div><div class="line">\left( \sum\_&#123;k=1&#125;^n a\_k b\_k \right)^2</div><div class="line">\leq</div><div class="line">\left( \sum\_&#123;k=1&#125;^n a\_k^2 \right)</div><div class="line">\left( \sum\_&#123;k=1&#125;^n b\_k^2 \right)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">\displaystyle </div><div class="line">    \frac&#123;1&#125;&#123;</div><div class="line">        \Bigl(\sqrt&#123;\phi \sqrt&#123;5&#125;&#125;-\phi\Bigr) e^&#123;</div><div class="line">        \frac25 \pi&#125;&#125; = 1+\frac&#123;e^&#123;-2\pi&#125;&#125; &#123;1+\frac&#123;e^&#123;-4\pi&#125;&#125; &#123;</div><div class="line">        1+\frac&#123;e^&#123;-6\pi&#125;&#125;</div><div class="line">        &#123;1+\frac&#123;e^&#123;-8\pi&#125;&#125;</div><div class="line">         &#123;1+\cdots&#125; &#125;</div><div class="line">        &#125; </div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">f(x) = \int_&#123;-\infty&#125;^\infty</div><div class="line">    \hat f(\xi)\,e^&#123;2 \pi i \xi x&#125;</div><div class="line">    \,d\xi</div></pre></td></tr></table></figure>
+<h3 id="绘制流程图-Flowchart"><a href="#绘制流程图-Flowchart" class="headerlink" title="绘制流程图 Flowchart"></a>绘制流程图 Flowchart</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">st=&gt;start: 用户登陆</div><div class="line">op=&gt;operation: 登陆操作</div><div class="line">cond=&gt;condition: 登陆成功 Yes or No?</div><div class="line">e=&gt;end: 进入后台</div><div class="line"></div><div class="line">st-&gt;op-&gt;cond</div><div class="line">cond(yes)-&gt;e</div><div class="line">cond(no)-&gt;op</div></pre></td></tr></table></figure>
+<h3 id="绘制序列图-Sequence-Diagram"><a href="#绘制序列图-Sequence-Diagram" class="headerlink" title="绘制序列图 Sequence Diagram"></a>绘制序列图 Sequence Diagram</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Andrew-&gt;China: Says Hello </div><div class="line">Note right of China: China thinks\nabout it </div><div class="line">China--&gt;Andrew: How are you? </div><div class="line">Andrew-&gt;&gt;China: I am good thanks!</div></pre></td></tr></table></figure>
+<h3 id="End"><a href="#End" class="headerlink" title="End"></a>End</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Windows/" rel="tag"># Windows</a>
+          
+            <a href="/tags/内核/" rel="tag"># 内核</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/09/10/简单实现隐藏SSDTHOOK/" rel="prev" title="简单实现隐藏SSDT HOOK">
+                简单实现隐藏SSDT HOOK <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="ZzAge" />
+          <p class="site-author-name" itemprop="name">ZzAge</p>
+           
+              <p class="site-description motion-element" itemprop="description">本有今无，本无今有。</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#主要特性"><span class="nav-number">1.</span> <span class="nav-text">主要特性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Editor-md"><span class="nav-number"></span> <span class="nav-text">Editor.md</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Heading-1"><span class="nav-number"></span> <span class="nav-text">Heading 1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Heading-2"><span class="nav-number"></span> <span class="nav-text">Heading 2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Heading-3"><span class="nav-number">1.</span> <span class="nav-text">Heading 3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Heading-4"><span class="nav-number">1.1.</span> <span class="nav-text">Heading 4</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Heading-5"><span class="nav-number">1.1.1.</span> <span class="nav-text">Heading 5</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Heading-6"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Heading 6</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Heading-1-link-Heading-link"><span class="nav-number"></span> <span class="nav-text">Heading 1 link Heading link</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Heading-2-link-Heading-link"><span class="nav-number"></span> <span class="nav-text">Heading 2 link Heading link</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Heading-3-link-Heading-link"><span class="nav-number">1.</span> <span class="nav-text">Heading 3 link Heading link</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Heading-4-link-Heading-link-Heading-link-Heading-link"><span class="nav-number">1.1.</span> <span class="nav-text">Heading 4 link Heading link Heading link Heading link</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Heading-5-link-Heading-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">Heading 5 link Heading link</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Heading-6-link-Heading-link"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Heading 6 link Heading link</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#标题（用底线的形式）Heading-underline"><span class="nav-number">1.2.</span> <span class="nav-text">标题（用底线的形式）Heading (underline)</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#This-is-an-H1"><span class="nav-number"></span> <span class="nav-text">This is an H1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#This-is-an-H2"><span class="nav-number"></span> <span class="nav-text">This is an H2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符效果和横线等"><span class="nav-number">1.</span> <span class="nav-text">字符效果和横线等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用-Blockquotes"><span class="nav-number">2.</span> <span class="nav-text">引用 Blockquotes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锚点与链接-Links"><span class="nav-number">3.</span> <span class="nav-text">锚点与链接 Links</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多语言代码高亮-Codes"><span class="nav-number">4.</span> <span class="nav-text">多语言代码高亮 Codes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#行内代码-Inline-code"><span class="nav-number">4.1.</span> <span class="nav-text">行内代码 Inline code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缩进风格"><span class="nav-number">4.2.</span> <span class="nav-text">缩进风格</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JS代码"><span class="nav-number">4.3.</span> <span class="nav-text">JS代码　</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML代码-HTML-codes"><span class="nav-number">4.4.</span> <span class="nav-text">HTML代码 HTML codes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图片-Images"><span class="nav-number">5.</span> <span class="nav-text">图片 Images</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表-Lists"><span class="nav-number">6.</span> <span class="nav-text">列表 Lists</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#无序列表（减号）Unordered-Lists"><span class="nav-number">6.1.</span> <span class="nav-text">无序列表（减号）Unordered Lists (-)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无序列表（星号）Unordered-Lists"><span class="nav-number">6.2.</span> <span class="nav-text">无序列表（星号）Unordered Lists (*)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无序列表（加号和嵌套）Unordered-Lists"><span class="nav-number">6.3.</span> <span class="nav-text">无序列表（加号和嵌套）Unordered Lists (+)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有序列表-Ordered-Lists"><span class="nav-number">6.4.</span> <span class="nav-text">有序列表 Ordered Lists (-)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GFM-task-list"><span class="nav-number">6.5.</span> <span class="nav-text">GFM task list</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绘制表格-Tables"><span class="nav-number">7.</span> <span class="nav-text">绘制表格 Tables</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特殊符号-HTML-Entities-Codes"><span class="nav-number">7.1.</span> <span class="nav-text">特殊符号 HTML Entities Codes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Emoji表情-smiley"><span class="nav-number">8.</span> <span class="nav-text">Emoji表情 :smiley:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GFM-task-lists-amp-Emoji-amp-fontAwesome-icon-emoji-amp-editormd-logo-emoji-editormd-logo-5x"><span class="nav-number">8.1.</span> <span class="nav-text">GFM task lists & Emoji & fontAwesome icon emoji & editormd logo emoji :editormd-logo-5x:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反斜杠-Escape"><span class="nav-number">8.2.</span> <span class="nav-text">反斜杠 Escape</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#科学公式-TeX-KaTeX"><span class="nav-number">9.</span> <span class="nav-text">科学公式 TeX(KaTeX)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绘制流程图-Flowchart"><span class="nav-number">10.</span> <span class="nav-text">绘制流程图 Flowchart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绘制序列图-Sequence-Diagram"><span class="nav-number">11.</span> <span class="nav-text">绘制序列图 Sequence Diagram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#End"><span class="nav-number">12.</span> <span class="nav-text">End</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZzAge</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zzage.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://www.zzage.cn/2015/09/10/[Android]某加固产品的脱壳分析和修复/';
+          this.page.identifier = '2015/09/10/[Android]某加固产品的脱壳分析和修复/';
+          this.page.title = '简单实现隐藏SSDT HOOK';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zzage.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
