@@ -32,8 +32,6 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform">
-<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -46,6 +44,21 @@
 
 
 
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
 
 
 
@@ -53,40 +66,15 @@
 
 
 
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
-
-<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.4.2">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.4.2">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
-
-
-
-
-
-
-
-
-
-<script type="text/javascript" id="hexo.configurations">
+<script id="hexo.configurations">
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
     scheme: 'Gemini',
-    version: '6.4.2',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
     fancybox: false,
     fastclick: false,
     lazyload: false,
@@ -123,12 +111,13 @@
 
 
 
-
+  
+  
   <link rel="canonical" href="http://www.zzage.cn/tags/Windows/">
 
 
 
-<script type="text/javascript" id="page.configurations">
+<script id="page.configurations">
   CONFIG.page = {
     sidebar: "",
   };
@@ -145,30 +134,31 @@
 
 
 
+
+
+
   <noscript>
-  <style type="text/css">
-    .use-motion .motion-element,
-    .use-motion .brand,
-    .use-motion .menu-item,
-    .sidebar-inner,
-    .use-motion .post-block,
-    .use-motion .pagination,
-    .use-motion .comments,
-    .use-motion .post-header,
-    .use-motion .post-body,
-    .use-motion .collection-title { opacity: initial; }
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
 
-    .use-motion .logo,
-    .use-motion .site-title,
-    .use-motion .site-subtitle {
-      opacity: initial;
-      top: initial;
-    }
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
 
-    .use-motion {
-      .logo-line-before i { left: initial; }
-      .logo-line-after i { right: initial; }
-    }
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
   </style>
 </noscript>
 
@@ -186,7 +176,7 @@
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
+  <div class="site-meta">
     
 
     <div class="custom-logo-site-title">
@@ -200,6 +190,7 @@
       
         <p class="site-subtitle">十分贫困，一无所有。</p>
       
+    
     
   </div>
 
@@ -223,16 +214,34 @@
         
           
           <li class="menu-item menu-item-home">
-    <a href="/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
   </li>
         
         
         
           
           <li class="menu-item menu-item-archives">
-    <a href="/archives/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
   </li>
 
       
@@ -299,11 +308,11 @@
 
       <h2 class="post-title">
         
-            <a class="post-title-link" href="/2010/09/10/简单实现隐藏SSDTHOOK/" itemprop="url">
-              
-                <span itemprop="name">简单实现隐藏SSDT HOOK</span>
-              
-            </a>
+          <a class="post-title-link" href="/2010/09/10/简单实现隐藏SSDTHOOK/" itemprop="url">
+            
+              <span itemprop="name">简单实现隐藏SSDT HOOK</span>
+            
+          </a>
         
       </h2>
 
@@ -328,6 +337,7 @@
   
 
 
+
           </div>
           
 
@@ -344,19 +354,18 @@
   </div>
 
   <aside id="sidebar" class="sidebar">
-    
     <div class="sidebar-inner">
 
       
 
       
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">ZzAge</p>
-              <p class="site-description motion-element" itemprop="description">本有今无，本无今有。</p>
+              <div class="site-description motion-element" itemprop="description">本有今无，本无今有。</div>
           </div>
 
           
@@ -378,7 +387,11 @@
                 
                 
                 <div class="site-state-item site-state-tags">
-                  <a href="/tags/index.html">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
                     
                     
                       
@@ -402,6 +415,7 @@
           
 
           
+
           
 
           
@@ -413,7 +427,7 @@
           
 
         </div>
-      </section>
+      </div>
 
       
 
@@ -421,6 +435,7 @@
 
     </div>
   </aside>
+  
 
 
         
@@ -429,7 +444,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
@@ -441,9 +456,7 @@
 </div>
 
 
-
-
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.8.0</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
 
 
 
@@ -451,7 +464,7 @@
 
 
 
-  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.4.2</div>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
 
 
 
@@ -477,7 +490,7 @@
     
 
     
-	
+
     
 
     
@@ -485,7 +498,7 @@
 
   
 
-<script type="text/javascript">
+<script>
   if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
     window.Promise = null;
   }
@@ -520,37 +533,27 @@
 
 
   
-  
-    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
 
   
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
 
   
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
 
   
-  
-    <script type="text/javascript" src="/lib/three/three.min.js"></script>
-  
+  <script src="/lib/three/three.min.js"></script>
 
   
-  
-    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
-  
+  <script src="/lib/three/three-waves.min.js"></script>
 
 
   
 
 
-  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+  <script src="/js/utils.js?v=7.1.0"></script>
 
-  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+  <script src="/js/motion.js?v=7.1.0"></script>
 
 
 
@@ -558,9 +561,10 @@
   
 
 
-  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+  <script src="/js/affix.js?v=7.1.0"></script>
 
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
 
 
 
@@ -569,94 +573,20 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+  <script src="/js/next-boot.js?v=7.1.0"></script>
 
 
+  
+
+  
+
+  
 
   
 
 
 
   
-
-
-
-
-
-
-
-
-
-
-    <link rel="stylesheet" href="http://api.zzage.cn/disqus/dist/iDisqus.min.css">
-    <script src="http://api.zzage.cn/disqus/dist/iDisqus.min.js"></script>
-    <script>
-        var emojiList = [{
-            code:'smile',
-            title:'笑脸',
-            unicode:'1f604'
-        },{
-            code:'mask',
-            title:'生病',
-            unicode:'1f637'
-        },{
-            code:'joy',
-            title:'破涕为笑',
-            unicode:'1f602'
-        },{
-            code:'stuck_out_tongue_closed_eyes',
-            title:'吐舌',
-            unicode:'1f61d'
-        },{
-            code:'flushed',
-            title:'脸红',
-            unicode:'1f633'
-        },{
-            code:'scream',
-            title:'恐惧',
-            unicode:'1f631'
-        },{
-            code:'pensive',
-            title:'失望',
-            unicode:'1f614'
-        },{
-            code:'unamused',
-            title:'无语',
-            unicode:'1f612'
-        },{
-            code:'grin',
-            title:'露齿笑',
-            unicode:'1f601'
-        },{
-            code:'heart_eyes',
-            title:'色',
-            unicode:'1f60d'
-        },{
-            code:'sweat',
-            title:'汗',
-            unicode:'1f613'
-        },{
-            code:'smirk',
-            title:'得意',
-            unicode:'1f60f'
-        }];
-        var disq = new iDisqus('comments', {
-            forum: 'zzage',
-            site: 'http://www.zzage.cn',
-            api: 'http://api.zzage.cn/disqus/api',
-            mode: 2,
-            badge: '博主',
-            timeout: 3000,
-            init: true,
-            url: location.pathname.replace('index.html',''),
-            emoji_list: emojiList,
-        });
-        disq.count();
-    </script>
-
-
-  
-
 
 
 
@@ -670,6 +600,13 @@
   
 
   
+
+  
+
+  
+
+  
+
   
 
   
